@@ -83,6 +83,7 @@ const App = () => {
             <input
               type="checkbox"
               className="theme-controller" 
+              value="light" 
             />
 
               {/* moon icon */}
@@ -174,7 +175,7 @@ const App = () => {
             ) : (
               <FaMicrophone className="mr-2" />
             )}
-            {isListening ? "Stop speaking" : "Start speaking"}
+            {isListening ? "Stop Speaking" : "Start Speaking"}
           </button>
 
           <button
