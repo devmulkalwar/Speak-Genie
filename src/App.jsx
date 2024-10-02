@@ -22,6 +22,7 @@ const App = () => {
     useSpeechRecognition();
 
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false); // New state to track speech synthesis
 
   useEffect(() => {
     setTextToCopy(transcript);
@@ -41,10 +42,22 @@ const App = () => {
     SpeechRecognition.stopListening();
   };
 
-  const listenToTranscript = () => {
-    const speech = new SpeechSynthesisUtterance(transcript);
-    speech.lang = "en-IN";
-    window.speechSynthesis.speak(speech);
+  // New function to toggle speech synthesis
+  const toggleSpeak = () => {
+    if (isSpeaking) {
+      window.speechSynthesis.cancel(); // Stop any ongoing speech
+      setIsSpeaking(false);
+    } else {
+      const speech = new SpeechSynthesisUtterance(transcript);
+      speech.lang = "en-IN";
+
+      speech.onend = () => {
+        setIsSpeaking(false); // Reset when speech is finished
+      };
+
+      window.speechSynthesis.speak(speech);
+      setIsSpeaking(true); // Speech synthesis is active
+    }
   };
 
   if (!browserSupportsSpeechRecognition) {
@@ -131,15 +144,24 @@ const App = () => {
             ) : (
               <FaMicrophone className="mr-2" />
             )}
-            {isListening ? "Stop Listening" : "Start Listening"}
+            {isListening ? "Stop speaking" : "Start speaking"}
           </button>
 
           <button
             className="btn btn-info flex items-center justify-center px-4 py-2"
-            onClick={listenToTranscript}
+            onClick={toggleSpeak}
           >
-            <FaVolumeUp className="mr-2" />
-            Listen
+            {isSpeaking ? (
+              <>
+                <FaStop className="mr-2" />
+                Stop Listening
+              </>
+            ) : (
+              <>
+                <FaVolumeUp className="mr-2" />
+                Start Listening
+              </>
+            )}
           </button>
         </div>
       </div>
